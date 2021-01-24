@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="mainAnchorPane" cacheShape="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1054.0" style="-fx-background-color: #2E3348;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <children>
+      <AnchorPane layoutX="61.0" layoutY="157.0" prefHeight="586.0" prefWidth="607.0" style="-fx-background-color: INHERIT;">
+         <children>
+            <BorderPane prefHeight="586.0" prefWidth="607.0" style="-fx-background-color: INHERIT;">
+               <center>
+                  <ImageView fx:id="imageView" fitHeight="588.0" fitWidth="607.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+               </center>
+            </BorderPane>
+         </children>
+      </AnchorPane>
+      <Button fx:id="loadImageButton" layoutX="232.0" layoutY="845.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="265.0" text="Загрузить фото..." />
+      <Label alignment="CENTER" layoutX="282.0" layoutY="30.0" text="Beta Find Contours" textFill="#f7ff0d">
+         <font>
+            <Font name="Arial" size="20.0" />
+         </font>
+      </Label>
+      <Slider fx:id="slider" layoutX="26.0" layoutY="98.0" majorTickUnit="255.0" max="255.0" minorTickCount="10" prefHeight="45.0" prefWidth="685.0" showTickLabels="true" showTickMarks="true" value="100.0" />
+      <Label fx:id="label1" alignment="CENTER" layoutX="26.0" layoutY="765.0" prefHeight="68.0" prefWidth="685.0" text="Загрузите фото" textAlignment="CENTER" textFill="#00ff30" wrapText="true" AnchorPane.topAnchor="765.0">
+         <font>
+            <Font size="21.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>
