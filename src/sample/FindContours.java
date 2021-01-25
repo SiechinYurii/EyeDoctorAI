@@ -51,29 +51,28 @@ class FindContours {
         frame = new JFrame("Finding contours in your image demo");
         // Set up the content pane.
         Image img = HighGui.toBufferedImage(src);
-        addComponentsToPane(frame.getContentPane(), img);
 
-        // Display the window.
-        frame.pack();
-        frame.setVisible(true);
-        update();
-    }
-
-    private void addComponentsToPane(Container pane, Image img) {
-
+        //addComponentsToPane
+        Container pane = frame.getContentPane();
         JPanel imgPanel = new JPanel();
-
 
         Mat blackImg = Mat.zeros(srcGray.size(), CvType.CV_8U);
         imgContoursLabel = new JLabel(new ImageIcon(HighGui.toBufferedImage(blackImg)));
         imgPanel.add(imgContoursLabel);
 
         pane.add(imgPanel, BorderLayout.CENTER);
-    }
 
-    private void update() {
+
+        // Display the window.
+        frame.pack();
         frame.setSize(Main.sceneX, Main.sceneY);
         frame.setLocation(Main.sceneX+20, 0);
+        frame.setVisible(true);
+        update();
+    }
+
+
+    private void update() {
 
         /// Detect edges using Canny
         Mat cannyOutput = new Mat();

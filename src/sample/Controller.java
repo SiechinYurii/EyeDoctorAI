@@ -114,8 +114,7 @@ public class Controller {
 
 //ToDO
 
-//Set drawing window into main window
-//Fix size of photo in drawind window
+//Set drawing window into main window (Fix size of photo in drawing window?)
 
 
 //Spring. TempClean in final spring method
