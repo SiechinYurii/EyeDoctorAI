@@ -8,14 +8,14 @@ import javafx.stage.Stage;
 
 
 public class Main extends Application {
-    public static final int sceneX = 734;
-    public static final int sceneY = 900;
+    public static final int mainWindowWidth = 900;
+    public static final int mainWindowHeight = 900;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Поиск контуров картинки");
-        primaryStage.setScene(new Scene(root, sceneX, sceneY));
+        primaryStage.setScene(new Scene(root, mainWindowWidth, mainWindowHeight));
         primaryStage.setX(0);
         primaryStage.setY(0);
         primaryStage.setOnCloseRequest(event -> {

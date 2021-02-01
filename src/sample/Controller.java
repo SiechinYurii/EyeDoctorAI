@@ -1,6 +1,5 @@
 package sample;
 
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -14,11 +13,9 @@ import org.opencv.imgcodecs.Imgcodecs;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 
-
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 
 
 public class Controller {
@@ -29,39 +26,33 @@ public class Controller {
     @FXML public Label label1;
 
 
-    String imagePath;
     FindContours FC;
-    String tempPath = "./src/sample/assets/temp"; // относительный путь
+    String imagePath;
     String fileName;
-    String sourcePath = null;
+    String sourceImagePath = null;
+    final String tempFolder = "./src/sample/assets/temp"; // относительный путь
+
 
     private void chooseFile() throws IOException {
+
         fileName = null;
         JFrame fileDialogFrame = new JFrame();
         FileDialog fileDialog = new FileDialog(fileDialogFrame, "Choose a file", FileDialog.LOAD);
         fileDialog.setVisible(true);
         fileName = fileDialog.getFile();
-        sourcePath = fileDialog.getDirectory() + fileName;
+
         if (fileName == null) {
             chooseFile();
+        } else {
+            sourceImagePath = fileDialog.getDirectory() + fileName;
+            imagePath = tempFolder + "/" + fileName;
+            try {
+                Cutter.resize(sourceImagePath, imagePath);
+            } catch (IOException ex) {
+                System.out.println("Error resizing the image");
+                ex.printStackTrace();
+            }
         }
-        else {
-            copyFile();
-        }
-    }
-
-    public void copyFile() throws IOException {
-//        //Удаляем файл, если он уже есть с таким именем
-//        File fileExistCheck = new File(tempPath+"/"+fileName);
-//        if(fileExistCheck.exists()) {
-//            fileExistCheck.delete();
-//        }
-
-        File source = new File(sourcePath);
-        File dest = new File(tempPath+"/"+fileName);
-
-        Files.copy(source.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
     }
 
 
@@ -71,13 +62,15 @@ public class Controller {
         FC = new FindContours();
 
         loadImageButton.setOnMouseClicked(event -> {
+
             FC.closeFrame();
-            // чистим temp
-            for (File myFile : new File(tempPath).listFiles()) { // эта строка кидает warning is=null во время дебага
+
+            // Cleaning temp
+            for (File myFile : new File(tempFolder).listFiles()) { // эта строка кидает warning is=null во время дебага
                 if (myFile.isFile()) myFile.delete();
             }
 
-            // выбор файла
+            // choosing File
             try {
                 chooseFile();
             } catch (IOException e) {
@@ -85,24 +78,22 @@ public class Controller {
             }
 
             //
-
-            imagePath = tempPath + "/" + fileName;
             Mat src = Imgcodecs.imread(imagePath);
 
             if (src.empty()) {
-                label1.setText("Неверный формат файла: " + sourcePath);
+                label1.setText("Неверный формат файла: " + sourceImagePath);
                 return;
             }
 
-            label1.setText("Вы выбрали файл: " + sourcePath);
-            Image image = new Image("file:///" + sourcePath);
+            label1.setText("Вы выбрали файл: " + sourceImagePath);
+            Image image = new Image("file:///" + sourceImagePath);
             imageView.setImage(image);
             slider.setValue(100);
             FC = new FindContours(src); //imagePath
 
         });
 
-
+        // slider
         slider.setOnMouseDragged(event -> {
             int sliderValue = (int) slider.getValue();
             FC.setThresholdPlusUpdate(sliderValue);

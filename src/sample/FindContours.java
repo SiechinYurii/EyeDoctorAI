@@ -1,14 +1,13 @@
 package sample;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Image;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
 
 import org.opencv.core.*;
+import org.opencv.core.Point;
 import org.opencv.highgui.HighGui;
 import org.opencv.imgproc.Imgproc;
 
@@ -30,29 +29,21 @@ class FindContours {
 
     public FindContours(){
         frame = new JFrame("Выберите файл");
-        frame.setSize(Main.sceneX, Main.sceneY);
-        frame.setLocation(Main.sceneX+20, 0);
-        frame.setVisible(true);
+        frame.setVisible(false);
     }
 
 
 
-
-
     public FindContours(Mat src) {
-        /// Load source image
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
-        /// Convert image to gray and blur it
-        Imgproc.cvtColor(src, srcGray, Imgproc.COLOR_BGR2GRAY);
-        Imgproc.blur(srcGray, srcGray, new Size(3, 3));
+        Imgproc.cvtColor(src, srcGray, Imgproc.COLOR_BGR2GRAY); // convert image to gray
+        Imgproc.blur(srcGray, srcGray, new Size(3, 3)); // blur it
 
-        // Create and set up the window.
-        frame = new JFrame("Finding contours in your image demo");
-        // Set up the content pane.
-        Image img = HighGui.toBufferedImage(src);
+        frame = new JFrame("Finding contours in your image demo"); // create and set up the window.
 
-        //addComponentsToPane
+
+        // addComponentsToPane
         Container pane = frame.getContentPane();
         JPanel imgPanel = new JPanel();
 
@@ -63,10 +54,10 @@ class FindContours {
         pane.add(imgPanel, BorderLayout.CENTER);
 
 
-        // Display the window.
+        // display the window.
         frame.pack();
-        frame.setSize(Main.sceneX, Main.sceneY);
-        frame.setLocation(Main.sceneX+20, 0);
+        frame.setSize(imgContoursLabel.getWidth(),imgContoursLabel.getHeight());
+        frame.setLocation(Main.mainWindowWidth + 1, 0);
         frame.setVisible(true);
         update();
     }
@@ -74,15 +65,16 @@ class FindContours {
 
     private void update() {
 
-        /// Detect edges using Canny
+        /// detect edges using Canny
         Mat cannyOutput = new Mat();
         Imgproc.Canny(srcGray, cannyOutput, threshold, threshold * 2);
-        /// Find contours
+
+        /// find contours
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
         Imgproc.findContours(cannyOutput, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        /// Draw contours
+        /// draw contours
         Mat drawing = Mat.zeros(cannyOutput.size(), CvType.CV_8UC3);
         for (int i = 0; i < contours.size(); i++) {
             Scalar color = new Scalar(256, 256, 256);
