@@ -8,8 +8,12 @@ import javax.swing.*;
 
 import org.opencv.core.*;
 import org.opencv.core.Point;
+import org.opencv.features2d.Features2d;
+import org.opencv.features2d.SimpleBlobDetector;
+import org.opencv.features2d.SimpleBlobDetector_Params;
 import org.opencv.highgui.HighGui;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.CascadeClassifier;
 
 class FindContours {
 
@@ -17,6 +21,8 @@ class FindContours {
     private JFrame frame;
     private JLabel imgContoursLabel;
     private int threshold = 100;
+    private Mat srcBinary = new Mat();
+    private Mat test = new Mat();
 
     public void closeFrame(){
         frame.dispose();
@@ -36,10 +42,9 @@ class FindContours {
 
     public FindContours(Mat src) {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-
         Imgproc.cvtColor(src, srcGray, Imgproc.COLOR_BGR2GRAY); // convert image to gray
-        Imgproc.blur(srcGray, srcGray, new Size(3, 3)); // blur it
-
+        Imgproc.threshold(srcGray, srcBinary, 100, 255, Imgproc.THRESH_BINARY);
+        //srcBinary = srcGray;
         frame = new JFrame("Finding contours in your image demo"); // create and set up the window.
 
 
@@ -47,16 +52,15 @@ class FindContours {
         Container pane = frame.getContentPane();
         JPanel imgPanel = new JPanel();
 
-        Mat blackImg = Mat.zeros(srcGray.size(), CvType.CV_8U);
-        imgContoursLabel = new JLabel(new ImageIcon(HighGui.toBufferedImage(blackImg)));
+        //Mat blackImg = Mat.zeros(srcGray.size(), CvType.CV_8U);
+        imgContoursLabel = new JLabel(new ImageIcon(HighGui.toBufferedImage(srcBinary)));
         imgPanel.add(imgContoursLabel);
 
         pane.add(imgPanel, BorderLayout.CENTER);
 
-
         // display the window.
         frame.pack();
-        frame.setSize(imgContoursLabel.getWidth(),imgContoursLabel.getHeight());
+        frame.setSize(imgContoursLabel.getWidth() + 20,imgContoursLabel.getHeight() + 53);
         frame.setLocation(Main.mainWindowWidth + 1, 0);
         frame.setVisible(true);
         update();
@@ -64,24 +68,36 @@ class FindContours {
 
 
     private void update() {
+        SimpleBlobDetector_Params params = new SimpleBlobDetector_Params();
+        params.set_filterByArea(true);
+        params.set_minArea((float)1);
+//        params.set_maxArea(100);
+//        params.set_filterByCircularity(true);
+//        params.set_minCircularity((float)1);
+//        params.set_filterByConvexity(true);
+//        params.set_minConvexity((float)0.10);
+//        params.set_filterByColor(true);
+//        params.set_filterByInertia(true);
+//        params.set_minInertiaRatio((float)0.2);
+        SimpleBlobDetector simpleBlobDetector = SimpleBlobDetector.create(params);
+        MatOfKeyPoint keypoints = new MatOfKeyPoint();
 
-        /// detect edges using Canny
-        Mat cannyOutput = new Mat();
-        Imgproc.Canny(srcGray, cannyOutput, threshold, threshold * 2);
 
-        /// find contours
-        List<MatOfPoint> contours = new ArrayList<>();
-        Mat hierarchy = new Mat();
-        Imgproc.findContours(cannyOutput, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        /// draw contours
-        Mat drawing = Mat.zeros(cannyOutput.size(), CvType.CV_8UC3);
-        for (int i = 0; i < contours.size(); i++) {
-            Scalar color = new Scalar(256, 256, 256);
-            Imgproc.drawContours(drawing, contours, i, color, 2, Imgproc.LINE_8, hierarchy, 0, new Point());
-        }
+        simpleBlobDetector.detect(srcBinary, keypoints);
+        System.out.println(keypoints.size());
+
+        Mat drawing = new Mat();
+        Features2d.drawKeypoints(srcBinary,keypoints,drawing);
+
 
         imgContoursLabel.setIcon(new ImageIcon(HighGui.toBufferedImage(drawing))); // рисовалка
         frame.repaint();
+
     }
+
+
+
+
+
 }

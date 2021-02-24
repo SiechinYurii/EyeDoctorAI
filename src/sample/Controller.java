@@ -10,10 +10,10 @@ import javafx.scene.image.ImageView;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
 
 
@@ -34,7 +34,6 @@ public class Controller {
 
 
     private void chooseFile() throws IOException {
-
         fileName = null;
         JFrame fileDialogFrame = new JFrame();
         FileDialog fileDialog = new FileDialog(fileDialogFrame, "Choose a file", FileDialog.LOAD);
@@ -77,7 +76,7 @@ public class Controller {
                 e.printStackTrace();
             }
 
-            //
+            // FindCountours
             Mat src = Imgcodecs.imread(imagePath);
 
             if (src.empty()) {
@@ -89,14 +88,15 @@ public class Controller {
             Image image = new Image("file:///" + sourceImagePath);
             imageView.setImage(image);
             slider.setValue(100);
-            FC = new FindContours(src); //imagePath
+            //FC = new FindContours(src);
+
+
+            ImageFaceDetector IFD = new ImageFaceDetector(imagePath);
 
         });
 
         // slider
         slider.setOnMouseDragged(event -> {
-            int sliderValue = (int) slider.getValue();
-            FC.setThresholdPlusUpdate(sliderValue);
         });
     }
 }
@@ -104,9 +104,5 @@ public class Controller {
 
 
 //ToDO
-
-//Set drawing window into main window (Fix size of photo in drawing window?)
-
-
 //Spring. TempClean in final spring method
 //Refactoring
