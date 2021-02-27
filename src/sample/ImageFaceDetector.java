@@ -15,57 +15,94 @@ import java.util.List;
 
 
 public class ImageFaceDetector {
+    Mat img;
+    JFrame frame;
 
     ImageFaceDetector(String imagePath){
 
-        //System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        //face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml');
-        //eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml');
-        //FXMLLoader face_cascade = new FXMLLoader(getClass().getResource("C:\\Program Files (x86)\\Common Files\\opencv\\build\\etc\\haarcascades\\haarcascade_frontalface_default.xml"));
-        //FXMLLoader eye_cascade = new FXMLLoader(getClass().getResource("C:\\Program Files (x86)\\Common Files\\opencv\\build\\etc\\haarcascades\\haarcascade_eye.xml"));
-
-
-        Mat img = Imgcodecs.imread(imagePath);
+        if (frame != null){
+            frame.dispose();
+        }
+        img = Imgcodecs.imread(imagePath);
         Mat imgGray = new Mat();
         Imgproc.cvtColor(img, imgGray, Imgproc.COLOR_BGR2GRAY);
 
-
         CascadeClassifier faceCC = new CascadeClassifier();
-        CascadeClassifier eyeCC = new CascadeClassifier();
         faceCC.load("C:\\Program Files (x86)\\Common Files\\opencv\\build\\etc\\haarcascades\\haarcascade_frontalface_default.xml");
+        CascadeClassifier eyeCC = new CascadeClassifier();
         eyeCC.load("C:\\Program Files (x86)\\Common Files\\opencv\\build\\etc\\haarcascades\\haarcascade_eye.xml");
 
-        MatOfRect MOR_face = new MatOfRect();
-        faceCC.detectMultiScale(img, MOR_face);
-        List<Rect> rects = MOR_face.toList();
 
-        Point p1 = new Point();
-        Point p2 = new Point();
-        Scalar color = new Scalar(255, 255, 255);
-        Rect rect = new Rect();
-        Mat eye = new Mat(img, rect);
 
-        System.out.println(imagePath);
-        for (Rect i: rects) {
-            p1.x = i.x;
-            p1.y = i.y;
-            p2.x = i.x + i.width;
-            p2.y = i.y + i.height;
-            Imgproc.rectangle(img, p1, p2, color, 2);
+        MatOfRect face_MOR = new MatOfRect();
+        faceCC.detectMultiScale(img, face_MOR);
+        List<Rect> face_rects = face_MOR.toList();
+
+        Mat face;
+        MatOfRect eyes_MOR;
+        List<Rect> eyes_rects;
+
+
+        for (Rect i: face_rects) {
+            face = new Mat(img, i);
+
+            eyes_MOR = new MatOfRect();
+            eyeCC.detectMultiScale(face, eyes_MOR);
+            eyes_rects = eyes_MOR.toList();
+                if(eyes_rects.size() == 2) {
+                    drawRect(i);
+                    for (Rect j : eyes_rects) {
+                        j.x += i.x;
+                        j.y += i.y;
+                        drawRect(j);
+                    }
+                }else if (eyes_rects.size() > 2){
+                    drawRect(i);
+
+                    int p1 = 0;
+                    Rect rect1 = new Rect();
+                    int p2 = 0;
+                    Rect rect2 = new Rect();
+                    for (Rect j : eyes_rects) {
+                        int p = j.height+j.width;
+                        if(p > p1){
+                            p2 = p1;
+                            rect2 = rect1;
+                            p1 = p;
+                            rect1 = j;
+
+                            rect1.x += i.x;
+                            rect1.y += i.y;
+                        } else if(p > p2){
+                            p2 = p;
+                            rect2 = j;
+                            rect2.x += i.x;
+                            rect2.y += i.y;
+                        }
+                    }
+                    drawRect(rect1);
+                    drawRect(rect2);
+                }
+            System.out.println();
         }
-        System.out.println();
 
-
-
-        //Imgproc.rectangle(imgGray, p1, p2, color, 2);
         createWindow(img);
 
     }
 
 
+    void drawRect(Rect rect){
+        Point p1 = new Point(rect.x, rect.y);
+        Point p2 = new Point(rect.x + rect.width, rect.y + rect.height);
+        Scalar color = new Scalar(255, 255, 255);
+
+        Imgproc.rectangle(img, p1, p2, color, 2);
+    }
+
+
     void createWindow(Mat img){
 
-        JFrame frame = new JFrame("Finding contours in your image demo"); // create and set up the window.
+        frame = new JFrame("."); // create and set up the window.
 
         // addComponentsToPane
         Container pane = frame.getContentPane();

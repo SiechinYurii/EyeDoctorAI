@@ -10,19 +10,18 @@ import javafx.scene.image.ImageView;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
+import sun.nio.cs.UTF_32;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
-
+import java.nio.charset.StandardCharsets;
 
 
 public class Controller {
 
     @FXML private ImageView imageView;
     @FXML private Button loadImageButton;
-    @FXML private Slider slider;
     @FXML public Label label1;
 
 
@@ -65,9 +64,16 @@ public class Controller {
             FC.closeFrame();
 
             // Cleaning temp
-            for (File myFile : new File(tempFolder).listFiles()) { // эта строка кидает warning is=null во время дебага
-                if (myFile.isFile()) myFile.delete();
+
+            try {
+                for (File myFile : new File(tempFolder).listFiles()) { // эта строка кидает warning is=null во время дебага
+                    if (myFile.isFile()) myFile.delete();
+                }
             }
+            finally {
+
+            }
+
 
             // choosing File
             try {
@@ -77,27 +83,40 @@ public class Controller {
             }
 
             // FindCountours
-            Mat src = Imgcodecs.imread(imagePath);
+
+
+//            String absolutePath = sourceImagePath;
+//            String absolutePathUnicode = null;
+//            try {
+//                absolutePathUnicode = new String(absolutePath.getBytes(StandardCharsets.ISO_8859_1), "UTF-8");
+//            } catch (UnsupportedEncodingException e) {
+//                e.printStackTrace();
+//            }
+//            System.out.println("sourceImagePath: " + sourceImagePath);
+//            System.out.println("absolutePath: " + absolutePath);
+//            System.out.println("absolutePathUnicode: " + absolutePathUnicode);
+//            Mat src = Imgcodecs.imread(absolutePathUnicode); // imagePath
+
+
+            Mat src = Imgcodecs.imread(imagePath); // imagePath
+
 
             if (src.empty()) {
                 label1.setText("Неверный формат файла: " + sourceImagePath);
+                imageView.setImage(null);
                 return;
             }
 
             label1.setText("Вы выбрали файл: " + sourceImagePath);
             Image image = new Image("file:///" + sourceImagePath);
             imageView.setImage(image);
-            slider.setValue(100);
-            //FC = new FindContours(src);
 
 
             ImageFaceDetector IFD = new ImageFaceDetector(imagePath);
 
         });
 
-        // slider
-        slider.setOnMouseDragged(event -> {
-        });
+
     }
 }
 
