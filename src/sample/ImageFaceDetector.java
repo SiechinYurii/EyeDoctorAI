@@ -1,13 +1,11 @@
 package sample;
 
 
-import com.sun.org.apache.xpath.internal.objects.XObject;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.highgui.HighGui;
 import org.opencv.objdetect.CascadeClassifier;
 
 import javax.swing.*;
@@ -16,24 +14,28 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import javafx.scene.image.Image;
+
 
 public class ImageFaceDetector {
 
+    public String errorMessage;
     private Mat img;
-    private String imagePath;
-    private String fileName;
     private String sourceImagePath = null;
-    public static JFrame frame = new JFrame();
-    private final static String tempFolder = "./src/sample/assets/temp"; // относительный путь
+    private final static String imagePath = "./src/sample/assets/temp.jpg";
 
+    public ImageFaceDetector() throws IOException {
+        errorMessage = FileWorker.chooseFile();
 
-    public ImageFaceDetector(){
-        //imageCheck();
-        frame.dispose();
-        frame = new JFrame();
+        FileWorker.copy(errorMessage, imagePath);
+        Mat m = Imgcodecs.imread(imagePath);
+        if (m.empty()){
+            errorMessage = "Невозможно прочитать";
+        }
+
     }
 
-    public void detect(){
+    public Image detect(){
 
         img = Imgcodecs.imread(imagePath);
         Mat imgGray = new Mat();
@@ -81,7 +83,6 @@ public class ImageFaceDetector {
                         rect2 = rect1;
                         p1 = p;
                         rect1 = j;
-
                         rect1.x += i.x;
                         rect1.y += i.y;
                     } else if(p > p2){
@@ -97,59 +98,49 @@ public class ImageFaceDetector {
             System.out.println();
         }
 
-        createWindow(img);
 
+
+        Imgcodecs.imwrite(imagePath, img);
+        Image image = new Image("file:///" + new File(imagePath).getAbsolutePath());
+        return image;
     }
 
 
     public boolean chooseFile() throws IOException {
-        fileName = null;
+        String fileName;
         JFrame fileDialogFrame = new JFrame();
         FileDialog fileDialog = new FileDialog(fileDialogFrame, "Choose a file", FileDialog.LOAD);
         fileDialog.setVisible(true);
         fileName = fileDialog.getFile();
-
         if (fileName == null) {
             return false;
         } else {
             sourceImagePath = fileDialog.getDirectory() + fileName;
-            //imagePath = tempFolder + "/" + fileName;
-            imagePath = tempFolder + "/temp.jpg" ;
-            try {
-                Cutter.resize(sourceImagePath, imagePath);
-            } catch (IOException ex) {
-                System.out.println("Error resizing the image");
-                ex.printStackTrace();
-            }
+//            try {
+//                Cutter.resize(sourceImagePath, imagePath);
+//            } catch (IOException ex) {
+//                System.out.println("Error resizing the image");
+//                ex.printStackTrace();
+//            }
             return true;
         }
     }
 
     public boolean imageCheck(){
         Mat m = Imgcodecs.imread(imagePath);
-        ImageFaceDetector.frame.setName(sourceImagePath);
         return ( ! m.empty());
     }
 
-    public static void cleanCash(){
-        for (File myFile : new File(tempFolder).listFiles()) { // эта строка кидает warning is=null во время дебага
-            if (myFile.isFile()) myFile.delete();
-        }
+    public String getSourceImagePath() {
+        return sourceImagePath;
     }
 
-//    private void convertRussianPath(){
-//            String absolutePath = sourceImagePath;
-//            String absolutePathUnicode = null;
-//            try {
-//                absolutePathUnicode = new String(absolutePath.getBytes(StandardCharsets.ISO_8859_1), "UTF-8");
-//            } catch (UnsupportedEncodingException e) {
-//                e.printStackTrace();
-//            }
-//            System.out.println("sourceImagePath: " + sourceImagePath);
-//            System.out.println("absolutePath: " + absolutePath);
-//            System.out.println("absolutePathUnicode: " + absolutePathUnicode);
-//            Mat src = Imgcodecs.imread(absolutePathUnicode); // imagePath
+    //    public void cleanCash(){
+//        File f = new File(imagePath);
+//        f.delete();
 //    }
+
+
 
     private void drawRect(Rect rect){
         Point p1 = new Point(rect.x, rect.y);
@@ -159,24 +150,23 @@ public class ImageFaceDetector {
         Imgproc.rectangle(img, p1, p2, color, 2);
     }
 
-    private void createWindow(Mat img){
-
-        // addComponentsToPane
-        Container pane = frame.getContentPane();
-        JPanel imgPanel = new JPanel();
-
-        JLabel imgContoursLabel = new JLabel(new ImageIcon(HighGui.toBufferedImage(img)));
-        imgPanel.add(imgContoursLabel);
-
-        pane.add(imgPanel, BorderLayout.CENTER);
-
-        frame.pack();
-        frame.setSize(imgContoursLabel.getWidth() + 20,imgContoursLabel.getHeight() + 53);
-        frame.setLocation(Main.mainWindowWidth + 1, 0);
-        frame.setVisible(true);
-
-        imgContoursLabel.setIcon(new ImageIcon(HighGui.toBufferedImage(img))); // рисовалка
-        frame.repaint();
-    }
+//    private void createWindow(Mat img){
+//        // addComponentsToPane
+//        Container pane = frame.getContentPane();
+//        JPanel imgPanel = new JPanel();
+//
+//        JLabel imgContoursLabel = new JLabel(new ImageIcon(HighGui.toBufferedImage(img)));
+//        imgPanel.add(imgContoursLabel);
+//
+//        pane.add(imgPanel, BorderLayout.CENTER);
+//
+//        frame.pack();
+//        frame.setSize(imgContoursLabel.getWidth() + 20,imgContoursLabel.getHeight() + 53);
+//        frame.setLocation(Main.mainWindowWidth + 1, 0);
+//        frame.setVisible(true);
+//
+//        imgContoursLabel.setIcon(new ImageIcon(HighGui.toBufferedImage(img))); // рисовалка
+//        frame.repaint();
+//    }
 
 }

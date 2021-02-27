@@ -1,11 +1,44 @@
 package sample;
 
+import javafx.scene.shape.Path;
+
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
-public class Cutter {
+public class FileWorker {
+
+    public static String chooseFile() throws IOException {
+        String sourceImagePath;
+        String fileName;
+        JFrame fileDialogFrame = new JFrame();
+        FileDialog fileDialog = new FileDialog(fileDialogFrame, "Выберите файл", FileDialog.LOAD);
+        fileDialog.setVisible(true);
+        fileName = fileDialog.getFile();
+        if (fileName == null) {
+            return "Файл не выбран";
+        } else {
+            sourceImagePath = fileDialog.getDirectory() + fileName;
+            return sourceImagePath;
+        }
+    }
+
+
+    public static void copy(String input, String output) throws IOException {
+        File inputFile = new File(input);
+        File outputFile = new File(output);
+
+        Files.copy(inputFile.toPath(), outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+    }
+
+
+
 
     public static void resize(String inputImagePath, String outputImagePath) throws IOException {
 

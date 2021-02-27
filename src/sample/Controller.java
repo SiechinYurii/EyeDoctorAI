@@ -21,41 +21,37 @@ public class Controller {
 
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
-        ImageFaceDetector.cleanCash(); // убрать в завершающий метод Spring
 
-        if (ImageFaceDetector.frame != null){
-            ImageFaceDetector.frame.dispose();
-        }
 
 
         loadImageButton.setOnMouseClicked(event -> {
 
-            ImageFaceDetector imageFaceDetector = new ImageFaceDetector();
-
-
+            ImageFaceDetector imageFaceDetector = null;
             try {
-                if( ! imageFaceDetector.chooseFile()){
-                    label1.setText("Файл не выбран");
-                    imageView.setImage(null);
-                    return;
-                }
+                imageFaceDetector = new ImageFaceDetector();
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
 
-
-            if(imageFaceDetector.imageCheck()){
-                label1.setText("Вы выбрали файл: " + ImageFaceDetector.frame.getName());
-                Image image = new Image("file:///" + ImageFaceDetector.frame.getName());
-                imageView.setImage(image);
-            } else{
-                label1.setText("Неверный формат файла: " + ImageFaceDetector.frame.getName());
-                imageView.setImage(null);
+            String sourceImagePath = imageFaceDetector.getSourceImagePath();
+            switch (imageFaceDetector.errorMessage){
+                case "Файл не выбран":
+                    label1.setText("Файл не выбран");
+                    imageView.setImage(null);
+                    return;
+                case "Невозможно прочитать":
+                    label1.setText("Невозможно прочитать: " + sourceImagePath);
+                    imageView.setImage(null);
+                    return;
+                default:
+                    label1.setText("Вы выбрали файл: " + sourceImagePath);
+                    Image image = new Image("file:///" + sourceImagePath);
+                    imageView.setImage(image);
             }
 
 
-            imageFaceDetector.detect();
+            imageView.setImage(imageFaceDetector.detect());
 
 
         });
