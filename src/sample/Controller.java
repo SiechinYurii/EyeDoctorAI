@@ -35,7 +35,7 @@ public class Controller {
 
 
             String sourceImagePath = imageFaceDetector.getSourceImagePath();
-            switch (imageFaceDetector.errorMessage){
+            switch (imageFaceDetector.getErrorMessage()){
                 case "Файл не выбран":
                     label1.setText("Файл не выбран");
                     imageView.setImage(null);
@@ -44,14 +44,18 @@ public class Controller {
                     label1.setText("Невозможно прочитать: " + sourceImagePath);
                     imageView.setImage(null);
                     return;
-                default:
+                case "Файл готов":
                     label1.setText("Вы выбрали файл: " + sourceImagePath);
                     Image image = new Image("file:///" + sourceImagePath);
                     imageView.setImage(image);
+                    break;
+                default:
+
             }
 
 
-            imageView.setImage(imageFaceDetector.detect());
+            imageFaceDetector.detect();
+            imageView.setImage(imageFaceDetector.getImage());
 
 
         });
