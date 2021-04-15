@@ -17,30 +17,49 @@ import javafx.scene.image.Image;
 
 public class ImageFaceDetector {
 
-    private final String errorMessage;
     private Mat img;
     private final String sourceImagePath;
     private final static String imagePath = "./src/sample/assets/temp.jpg";
+    private final Controller controller;
 
-    public ImageFaceDetector() throws IOException {
+    public ImageFaceDetector(Controller controller){
+        this.controller = controller;
         sourceImagePath = FileWorker.chooseFile();
+        if(!fileCheck()){return;}
+        detect();
+        setProcessedImage();
+    }
+
+    public boolean fileCheck(){
+        controller.imageView.setImage(null);
+        //controller.label1.color = red
+
         if (sourceImagePath == null){
-            errorMessage = "Файл не выбран";
-        } else {
-            FileWorker.copy(sourceImagePath, imagePath);
-            Mat m = Imgcodecs.imread(imagePath);
-            if (m.empty()){
-                errorMessage = "Невозможно прочитать";
-            } else {
-                errorMessage = "Файл готов";
-            }
+            controller.label1.setText("Файл не выбран");
+            return false;
         }
 
+        try {
+            FileWorker.copy(sourceImagePath, imagePath);
+        }catch (IOException e){
+            controller.label1.setText("Ошибка копирования файла");
+            return false;
+        }
 
+        img = Imgcodecs.imread(imagePath);
+        if (img.empty()){
+            controller.label1.setText("Невозможно прочитать файл:" + sourceImagePath);
+            return false;
+        }
+
+        //controller.label1.color = green
+        controller.label1.setText("Вы выбрали файл: " + sourceImagePath);
+        Image image = new Image("file:///" + sourceImagePath);
+        controller.imageView.setImage(image);
+        return true;
     }
 
     public void detect(){
-
         img = Imgcodecs.imread(imagePath);
         Mat imgGray = new Mat();
         Imgproc.cvtColor(img, imgGray, Imgproc.COLOR_BGR2GRAY);
@@ -50,10 +69,10 @@ public class ImageFaceDetector {
         CascadeClassifier eyeCC = new CascadeClassifier();
         eyeCC.load("C:\\Program Files (x86)\\Common Files\\opencv\\build\\etc\\haarcascades\\haarcascade_eye.xml");
 
-
         MatOfRect face_MOR = new MatOfRect();
         faceCC.detectMultiScale(img, face_MOR);
         List<Rect> face_rects = face_MOR.toList();
+
         if(face_rects.size() == 0) {
             System.out.println("face_rects.size() == 0");
             MatOfRect eyes_MOR = new MatOfRect();
@@ -66,7 +85,6 @@ public class ImageFaceDetector {
             Mat face;
             MatOfRect eyes_MOR;
             List<Rect> eyes_rects;
-
 
             for (Rect i : face_rects) {
                 face = new Mat(img, i);
@@ -112,20 +130,6 @@ public class ImageFaceDetector {
         }
     }
 
-
-    public Image getImage(){
-        Imgcodecs.imwrite(imagePath, img);
-        return new Image("file:///" + new File(imagePath).getAbsolutePath());
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public String getSourceImagePath() {
-        return sourceImagePath;
-    }
-
     private void drawRect(Rect rect){
         Point p1 = new Point(rect.x, rect.y);
         Point p2 = new Point(rect.x + rect.width, rect.y + rect.height);
@@ -134,5 +138,10 @@ public class ImageFaceDetector {
         Imgproc.rectangle(img, p1, p2, color, 4);
     }
 
+    private void setProcessedImage(){
+        Imgcodecs.imwrite(imagePath, img);
+        Image image = new Image("file:///" + new File(imagePath).getAbsolutePath());
+        controller.imageView.setImage(image);
+    }
 
 }
