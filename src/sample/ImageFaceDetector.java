@@ -1,6 +1,7 @@
 package sample;
 
 
+import javafx.scene.paint.Paint;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -32,7 +33,7 @@ public class ImageFaceDetector {
 
     public boolean fileCheck(){
         controller.imageView.setImage(null);
-        //controller.label1.color = red
+        controller.label1.setTextFill(Paint.valueOf("#FF0000"));
 
         if (sourceImagePath == null){
             controller.label1.setText("Файл не выбран");
@@ -52,7 +53,8 @@ public class ImageFaceDetector {
             return false;
         }
 
-        //controller.label1.color = green
+
+        controller.label1.setTextFill(Paint.valueOf("#00FF00"));
         controller.label1.setText("Вы выбрали файл: " + sourceImagePath);
         Image image = new Image("file:///" + sourceImagePath);
         controller.imageView.setImage(image);

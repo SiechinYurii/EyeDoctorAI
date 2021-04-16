@@ -14,7 +14,7 @@ public class Controller {
     @FXML public Label label1;
 
     public void buttonAction(){
-        ImageFaceDetector imageFaceDetector = new ImageFaceDetector(this);
+        new ImageFaceDetector(this);
     }
 
     public void initialize(){
