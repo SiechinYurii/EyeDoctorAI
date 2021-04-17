@@ -19,19 +19,28 @@ import javafx.scene.image.Image;
 public class ImageFaceDetector {
 
     private Mat img;
-    private final String sourceImagePath;
+    private String sourceImagePath;
     private final static String imagePath = "./src/sample/assets/temp.jpg";
-    private final Controller controller;
+    private Controller controller;
+
+    public ImageFaceDetector(){}
+
+    public void setController(Controller controller){
+        this.controller = controller;
+    }
 
     public ImageFaceDetector(Controller controller){
         this.controller = controller;
+    }
+
+    public void detect(){
         sourceImagePath = FileWorker.chooseFile();
         if(!fileCheck()){return;}
-        detect();
+        find();
         setProcessedImage();
     }
 
-    public boolean fileCheck(){
+    private boolean fileCheck(){
         controller.imageView.setImage(null);
         controller.label1.setTextFill(Paint.valueOf("#FF0000"));
 
@@ -61,7 +70,7 @@ public class ImageFaceDetector {
         return true;
     }
 
-    public void detect(){
+    private void find(){
         img = Imgcodecs.imread(imagePath);
         Mat imgGray = new Mat();
         Imgproc.cvtColor(img, imgGray, Imgproc.COLOR_BGR2GRAY);
@@ -76,7 +85,6 @@ public class ImageFaceDetector {
         List<Rect> face_rects = face_MOR.toList();
 
         if(face_rects.size() == 0) {
-            System.out.println("face_rects.size() == 0");
             MatOfRect eyes_MOR = new MatOfRect();
             eyeCC.detectMultiScale(img, eyes_MOR);
             List<Rect> eyes_rects = eyes_MOR.toList();

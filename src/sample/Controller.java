@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import org.opencv.core.Core;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 public class Controller {
@@ -14,7 +15,11 @@ public class Controller {
     @FXML public Label label1;
 
     public void buttonAction(){
-        new ImageFaceDetector(this);
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext1.xml");
+        ImageFaceDetector imageFaceDetector = context.getBean("imageFaceDetector", ImageFaceDetector.class);
+        imageFaceDetector.setController(this);
+        imageFaceDetector.detect();
+        context.close();
     }
 
     public void initialize(){
