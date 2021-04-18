@@ -20,17 +20,17 @@ public class ImageFaceDetector {
 
     private Mat img;
     private String sourceImagePath;
+    private static Controller controller;
     private final static String imagePath = "./src/sample/assets/temp.jpg";
-    private Controller controller;
 
     public ImageFaceDetector(){}
 
     public void setController(Controller controller){
-        this.controller = controller;
+        ImageFaceDetector.controller = controller;
     }
 
     public ImageFaceDetector(Controller controller){
-        this.controller = controller;
+        ImageFaceDetector.controller = controller;
     }
 
     public void detect(){

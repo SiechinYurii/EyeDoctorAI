@@ -8,28 +8,32 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane cacheShape="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="900.0" style="-fx-background-color: #2E3348;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
-   <children>
-      <AnchorPane layoutX="103.0" layoutY="59.0" prefHeight="600.0" prefWidth="600.0" style="-fx-background-color: INHERIT;">
-         <children>
-            <BorderPane prefHeight="702.0" prefWidth="702.0" style="-fx-background-color: INHERIT; -fx-border-color: #FFF;">
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-               <center>
-                  <ImageView fx:id="imageView" fitHeight="700.0" fitWidth="700.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
-               </center>
-            </BorderPane>
-         </children>
+<AnchorPane cacheShape="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="900.0" prefWidth="900.0" style="-fx-background-color: #2E3348;"
+            xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="sample.Controller">
+   <AnchorPane layoutX="103.0" layoutY="59.0" prefHeight="600.0" prefWidth="600.0"
+               style="-fx-background-color: INHERIT;">
+      <opaqueInsets>
+         <Insets/>
+      </opaqueInsets>
+      <BorderPane prefHeight="702.0" prefWidth="702.0"
+                  style="-fx-background-color: INHERIT; -fx-border-color: #FFF;">
          <opaqueInsets>
-            <Insets />
+            <Insets/>
          </opaqueInsets>
-      </AnchorPane>
-      <Button fx:id="loadImageButton" layoutX="318.0" layoutY="837.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="265.0" text="Загрузить фото..." />
-      <Label fx:id="label1" alignment="CENTER" layoutX="112.0" layoutY="761.0" prefHeight="68.0" prefWidth="685.0" text="Загрузите фото" textAlignment="CENTER" textFill="#00ff30" wrapText="true" AnchorPane.topAnchor="761.0">
-         <font>
-            <Font size="21.0" />
-         </font>
-      </Label>
-   </children>
+         <center>
+            <ImageView fx:id="imageView" fitHeight="700.0" fitWidth="700.0" pickOnBounds="true" preserveRatio="true"
+                       BorderPane.alignment="CENTER"/>
+         </center>
+      </BorderPane>
+   </AnchorPane>
+   <Button fx:id="loadImageButton" layoutX="318.0" layoutY="837.0" mnemonicParsing="false" prefHeight="41.0"
+           prefWidth="265.0" text="Загрузить фото..."/>
+   <Label fx:id="label1" alignment="CENTER" layoutX="112.0" layoutY="761.0" prefHeight="68.0" prefWidth="685.0"
+          text="Загрузите фото" textAlignment="CENTER" textFill="#00ff30" wrapText="true" AnchorPane.topAnchor="761.0">
+      <font>
+         <Font size="21.0"/>
+      </font>
+   </Label>
 </AnchorPane>
